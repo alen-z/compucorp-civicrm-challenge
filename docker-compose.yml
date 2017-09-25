@@ -1,0 +1,20 @@
+version: "3"
+services:
+  web:
+    build: nginx
+    ports:
+      - 80:80
+      - 443:443
+    env_file:
+      - ./site.env
+    depends_on:
+      - db
+  db:
+    image: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: h4rDtocoPY
+    ports:
+      - 3306:3306
+    volumes:
+      # Alphabetical order of execution
+      - "./mysql/startup.sql:/docker-entrypoint-initdb.d/01_startup.sql"

@@ -1,0 +1,100 @@
+# Redirect http to https
+server {
+    listen 80;
+    listen [::]:80;
+    server_name compucorp.zaay.io; 
+    return 301 https://compucorp.zaay.io$request_uri;
+}
+
+# SSL configuration
+server {
+	listen 443 ssl spdy;
+	listen [::]:443 ssl spdy;
+
+    # certbot
+	ssl_certificate     /etc/letsencrypt/live/compucorp.zaay.io/cert.pem;
+ 	ssl_certificate_key /etc/letsencrypt/live/compucorp.zaay.io/privkey.pem;
+
+    # OpenSSL
+    ssl_dhparam /etc/ssl/dhparam.pem;
+
+    server_name compucorp.zaay.io;
+
+	root /var/www/html/drupal;
+
+	index index.php;
+
+    ssl_ciphers EECDH+ECDSA+AESGCM:EECDH+aRSA+AESGCM:EECDH+ECDSA+SHA512:EECDH+ECDSA+SHA384:EECDH+ECDSA+SHA256:ECDH+AESGCM:ECDH+AES256:DH+AESGCM:DH+AES256:RSA+AESGCM:!aNULL:!eNULL:!LOW:!RC4:!3DES:!MD5:!EXP:!PSK:!SRP:!DSS;
+    ssl_prefer_server_ciphers on;
+
+    ssl_session_cache shared:SSL:20m;
+
+    # OCSP stapling
+    ssl_stapling on;
+    ssl_stapling_verify on;
+    ssl_trusted_certificate /etc/letsencrypt/live/compucorp.zaay.io/fullchain.pem;
+    resolver 8.8.8.8; # Google and OpenDNS have the same ping from my EC2 ~10ms
+
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload";
+
+    # Boost SSL Labs score
+    ssl_ecdh_curve secp384r1;
+
+    # Minimize Time To First Byte
+    ssl_buffer_size 4k;
+
+    # Fix uploading images in Drupal (2Mb in Article) etc. Set 0 to disable checking.
+    client_max_body_size 5m;
+
+	location / {
+		try_files $uri $uri/ @drupal;
+	}
+
+	location @drupal {
+        rewrite ^/(.*)$ /index.php?q=$1;
+    }
+
+	location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/run/php5-fpm.sock;
+    }
+
+	location ~ /\.ht {
+		deny all;
+	}
+
+	location = /favicon.ico {
+        log_not_found off;
+        access_log off;
+    }
+
+    location = /robots.txt {
+        allow all;
+        log_not_found off;
+        access_log off;
+    }
+
+    location = /backup {
+        deny all;
+    }
+
+    location ~* \.(txt|log)$ {
+        allow 127.0.0.1;
+        deny all;
+    }
+
+    # Deny CiviCRM listed requests for security reasons.
+    location ~* ^/sites/.*/files/civicrm/(?:ConfigAndLog|upload|custom|templates_c) {
+        access_log off;
+        return 404;
+    }
+
+    location ^~ /.well-known/acme-challenge/ {
+        default_type "text/plain";
+        root /var/www/letsencrypt;
+    }
+
+    location = /.well-known/acme-challenge/ {
+        return 404;
+    }
+}

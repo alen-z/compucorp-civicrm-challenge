@@ -1,0 +1,12 @@
+# Drupal
+CREATE DATABASE drupal CHARACTER SET utf8 COLLATE utf8_general_ci;
+CREATE USER 'drupal'@'172.%' IDENTIFIED BY '3ZqDyMmpPq7MGnHu';
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP, INDEX, ALTER, CREATE TEMPORARY TABLES ON drupal.* TO 'drupal'@'172.%' IDENTIFIED BY '3ZqDyMmpPq7MGnHu';
+
+# CiviCRM
+CREATE DATABASE civicrm CHARACTER SET utf8 COLLATE utf8_general_ci;
+CREATE USER 'civicrm'@'172.%' IDENTIFIED BY 'gudesdesQBfdUATj';
+GRANT ALL PRIVILEGES ON civicrm.* TO 'civicrm'@'172.%' IDENTIFIED BY 'gudesdesQBfdUATj';
+
+# Allow Drupal to play with CiviCRM
+GRANT SELECT ON civicrm.* TO 'drupal'@'172.%' IDENTIFIED BY '3ZqDyMmpPq7MGnHu';

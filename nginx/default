@@ -1,0 +1,32 @@
+server {
+	listen 80;
+	listen [::]:80;
+
+	root /var/www/html/drupal;
+
+	index index.php;
+
+	server_name _;
+
+	location / {
+		try_files $uri $uri/ @drupal;
+	}
+
+	location @drupal {
+        rewrite ^/(.*)$ /index.php?q=$1;
+    }
+
+	location ~ \.php$ {
+        include snippets/fastcgi-php.conf;
+        fastcgi_pass unix:/run/php5-fpm.sock;
+    }
+
+    location ^~ /.well-known/acme-challenge/ {
+        default_type "text/plain";
+        root /var/www/letsencrypt;
+    }
+
+    location = /.well-known/acme-challenge/ {
+        return 404;
+    }
+}
