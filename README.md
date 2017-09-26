@@ -39,7 +39,8 @@ Official <code>apt-get install drupal7</code> (https://wiki.debian.org/Drupal) u
 
 * Drupal user can run all drush commands
 * Drupal private directory path is in user's home with sufficient permissions for Drupal access
-* Not showing any errors in producton. An attacker could exploit a missing <code>$base_url</code> setting so it is included in Drupal settings.php
+* Not showing any errors in producton
+* An attacker could exploit a missing <code>$base_url</code> setting so it is included in Drupal settings.php
 * Drupal files folder needs to be writable
 * Removed permissions for other users.
 
