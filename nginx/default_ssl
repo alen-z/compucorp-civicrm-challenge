@@ -8,21 +8,21 @@ server {
 
 # SSL configuration
 server {
-	listen 443 ssl spdy;
-	listen [::]:443 ssl spdy;
+    listen 443 ssl spdy;
+    listen [::]:443 ssl spdy;
 
     # certbot
-	ssl_certificate     /etc/letsencrypt/live/compucorp.zaay.io/cert.pem;
- 	ssl_certificate_key /etc/letsencrypt/live/compucorp.zaay.io/privkey.pem;
+    ssl_certificate     /etc/letsencrypt/live/compucorp.zaay.io/cert.pem;
+    ssl_certificate_key /etc/letsencrypt/live/compucorp.zaay.io/privkey.pem;
 
     # OpenSSL
     ssl_dhparam /etc/ssl/dhparam.pem;
 
     server_name compucorp.zaay.io;
 
-	root /var/www/html/drupal;
+    root /var/www/html/drupal;
 
-	index index.php;
+    index index.php;
 
     ssl_ciphers EECDH+ECDSA+AESGCM:EECDH+aRSA+AESGCM:EECDH+ECDSA+SHA512:EECDH+ECDSA+SHA384:EECDH+ECDSA+SHA256:ECDH+AESGCM:ECDH+AES256:DH+AESGCM:DH+AES256:RSA+AESGCM:!aNULL:!eNULL:!LOW:!RC4:!3DES:!MD5:!EXP:!PSK:!SRP:!DSS;
     ssl_prefer_server_ciphers on;
@@ -46,24 +46,24 @@ server {
     # Fix uploading images in Drupal (2Mb in Article) etc. Set 0 to disable checking.
     client_max_body_size 5m;
 
-	location / {
-		try_files $uri $uri/ @drupal;
-	}
-
-	location @drupal {
-        rewrite ^/(.*)$ /index.php?q=$1;
+    location / {
+        try_files $uri $uri/ @drupal;
     }
 
-	location ~ \.php$ {
+    location @drupal {
+       rewrite ^/(.*)$ /index.php?q=$1;
+    }
+
+    location ~ \.php$ {
         include snippets/fastcgi-php.conf;
         fastcgi_pass unix:/run/php5-fpm.sock;
     }
 
-	location ~ /\.ht {
-		deny all;
-	}
+    location ~ /\.ht {
+        deny all;
+    }
 
-	location = /favicon.ico {
+    location = /favicon.ico {
         log_not_found off;
         access_log off;
     }
