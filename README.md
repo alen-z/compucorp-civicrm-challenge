@@ -70,7 +70,7 @@ In production we would want to use database with data mounted outside of the con
 # Docker
 Some of the possible improvements:
 * Unable to change only NGINX config with Docker commands w/o re-deploying complete application.
-* Automate Amazon S3 bachup using three variables: bucket name, Access Key ID and Secret
+* Automate Amazon S3 backup using three variables: bucket name, access key ID and secret
 
 # AWS
 Amazon S3 bucket is in US East (N. Virginia) to use Drupal Backup and Migrate Amazon S3 feature.
