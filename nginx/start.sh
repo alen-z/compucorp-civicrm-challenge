@@ -66,10 +66,10 @@ site_install () {
 
 	# Install Drupal
 	drush site-install standard -y \
-	    --db-url="mysql://$DRUPAL_DB_USER:$DRUPAL_DB_PASS@$DRUPAL_DB_HOST/$DRUPAL_DB_NAME" \
-	    --site-name="$DRUPAL_SITE_NAME" \
-	    --account-name=$DRUPAL_SITE_USER \
-	    --account-pass=$DRUPAL_SITE_PASS
+		--db-url="mysql://$DRUPAL_DB_USER:$DRUPAL_DB_PASS@$DRUPAL_DB_HOST/$DRUPAL_DB_NAME" \
+		--site-name="$DRUPAL_SITE_NAME" \
+		--account-name=$DRUPAL_SITE_USER \
+		--account-pass=$DRUPAL_SITE_PASS
 
 	# Update Drupal site configuration file. An attacker could exploit a missing $base_url setting.
 	sed -i "s/^# \$base_url = 'http:\/\/www.example.com'/# \$base_url = 'http:\/\/$SITE_DOMAIN'/" $WWW_DIR/sites/default/settings.php
@@ -129,15 +129,15 @@ mysql_wait_until_live () {
 	while [ $SQL_ALIVE -eq 0 ]
 	do
 		# Put stderr in variable for evaluation
-        SQL_CONN=$(mysql -h $DRUPAL_DB_HOST -u $DRUPAL_DB_USER -p$DRUPAL_DB_PASS -e "exit" 2>&1)
-        echo "Waiting for MySQL to come alive (testing for '$DRUPAL_DB_USER' user on '$DRUPAL_DB_HOST' host)..."
-        if [[ $SQL_CONN != ERROR* ]]; then
-        	# We are alive. From now on we can use MySQL.
+		SQL_CONN=$(mysql -h $DRUPAL_DB_HOST -u $DRUPAL_DB_USER -p$DRUPAL_DB_PASS -e "exit" 2>&1)
+		echo "Waiting for MySQL to come alive (testing for '$DRUPAL_DB_USER' user on '$DRUPAL_DB_HOST' host)..."
+		if [[ $SQL_CONN != ERROR* ]]; then
+			# We are alive. From now on we can use MySQL.
 			echo "Database ready!"
 			SQL_ALIVE=1
-        fi
-        # Check every 1s
-        sleep 1
+		fi
+		# Check every 1s
+		sleep 1
 	done
 
 }
@@ -219,5 +219,5 @@ if [ ! $# -eq 0 ]; then
 	set -e
 
 	# Execute Docker commands if given
-    exec "$@"
+	exec "$@"
 fi
